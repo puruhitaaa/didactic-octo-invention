@@ -5,10 +5,11 @@ import {
   ShoppingBagIcon,
   UserIcon,
 } from '@heroicons/react/24/outline'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import useCartStore from '../../stores/cartStore'
 
 const Header = () => {
-  const isLoggedIn = false
+  const { data: session } = useSession()
   const cartItems = useCartStore((state) => state.items)
 
   return (
@@ -57,13 +58,10 @@ const Header = () => {
             </div>
           </Link>
 
-          {isLoggedIn ? (
-            <div className='relative h-6 w-6'>
+          {session ? (
+            <div className='relative h-6 w-6' onClick={() => signOut()}>
               <Image
-                src={
-                  // session.user?.image ||
-                  'https://rb.gy/j055kb'
-                }
+                src={session.user?.image || 'https://rb.gy/j055kb'}
                 alt='user-avatar'
                 className='cursor-pointer rounded-full'
                 layout='fill'
@@ -71,7 +69,7 @@ const Header = () => {
               />
             </div>
           ) : (
-            <UserIcon className='headerIcon' />
+            <UserIcon className='headerIcon' onClick={() => signIn()} />
           )}
         </div>
       </div>

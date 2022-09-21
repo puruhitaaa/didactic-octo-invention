@@ -1,6 +1,8 @@
 import type { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { Tab } from '@headlessui/react'
+import { getSession } from 'next-auth/react'
+import type { Session } from 'next-auth'
 import { Header, Landing } from '../layouts'
 import { fetchCategories } from '../utils/fetchCategories'
 import { fetchProducts } from '../utils/fetchProducts'
@@ -9,16 +11,19 @@ import { Cart, Product } from '../components'
 interface Props {
   categories: Category[]
   products: Product[]
+  session: Session | null
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const categories = await fetchCategories()
   const products = await fetchProducts()
+  const session = await getSession(ctx)
 
   return {
     props: {
       categories,
       products,
+      session,
     },
   }
 }
